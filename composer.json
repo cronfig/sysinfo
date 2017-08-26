@@ -1,0 +1,24 @@
+{
+    "name": "cronfig/sysinfo",
+    "description": "Library to get system info and available resources",
+    "type": "library",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "\"John Linhart\"",
+            "email": "john@linhart.email"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Cronfig\\Sysinfo\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CronfigTest\\Sysinfo\\": "tests"
+        }
+    }
+}
