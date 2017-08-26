@@ -151,7 +151,7 @@ abstract class AbstractOs
     public function getBytesFromPhpIniValue($val)
     {
         $val = trim($val);
-        $last = strtolower($val[strlen($val)-1]);
+        $last = strtolower($val[strlen($val) - 1]);
 
         switch ($last) {
             case 'g':
