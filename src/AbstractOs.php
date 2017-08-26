@@ -74,7 +74,6 @@ abstract class AbstractOs
         $possibleArguments = [self::TIMEFRAME_1_MIN, self::TIMEFRAME_5_MIN, self::TIMEFRAME_15_MIN];
 
         if (!in_array($timeframe, $possibleArguments)) {
-
             throw new \InvalidArgumentException;
         }
 
@@ -108,7 +107,8 @@ abstract class AbstractOs
      */
     public function getCurrentOsName()
     {
-        return uname('s');
+        $this->requiredFunction('php_uname');
+        return php_uname('s');
     }
 
     public function getTimeframeFromExecutionTime($executionTime)
@@ -135,7 +135,6 @@ abstract class AbstractOs
     public function getPercentage($current, $limit, $round = 2)
     {
         if (!$limit) {
-
             return 0;
         }
 
@@ -145,7 +144,7 @@ abstract class AbstractOs
     /**
      * Converts shorthand memory notation value to bytes
      *
-     * @param  string $val Memory size shorthand notation string
+     * @param string $val Memory size shorthand notation string
      *
      * @return int in bytes
      */
@@ -154,13 +153,16 @@ abstract class AbstractOs
         $val = trim($val);
         $last = strtolower($val[strlen($val)-1]);
 
-        switch($last) {
+        switch ($last) {
             case 'g':
                 $val *= 1024;
+                break;
             case 'm':
                 $val *= 1024;
+                break;
             case 'k':
                 $val *= 1024;
+                break;
         }
 
         return $val;
@@ -169,7 +171,7 @@ abstract class AbstractOs
     /**
      * Throws an exception if the function does not exist or is disabled
      *
-     * @param  string $name of the required function
+     * @param string $name of the required function
      *
      * @return self
      */
@@ -189,14 +191,13 @@ abstract class AbstractOs
     /**
      * Check if the function is disabled in php.ini
      *
-     * @param  string  $name
+     * @param string $name
      *
      * @return bool
      */
     public function isFunctionDisabled($name)
     {
         $disabled = explode(',', ini_get('disable_functions'));
-
         return in_array($name, $disabled);
     }
 }

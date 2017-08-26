@@ -9,8 +9,9 @@
 namespace CronfigTest\Sysinfo;
 
 use Cronfig\Sysinfo\Mac;
+use PHPUnit\Framework\Constraint\IsType;
 
-class MacTest extends \PHPUnit_Framework_TestCase
+class MacTest extends \PHPUnit\Framework\TestCase
 {
     public function testInUseTrue()
     {
@@ -48,6 +49,6 @@ class MacTest extends \PHPUnit_Framework_TestCase
         $result = $os->getCoreCount();
 
         $this->assertGreaterThan(1, $result);
-        $this->assertInternalType(\PHPUnit_Framework_Constraint_IsType::TYPE_INT, $result);
+        $this->assertInternalType(IsType::TYPE_INT, $result);
     }
 }

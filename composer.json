@@ -1,16 +1,27 @@
 {
     "name": "cronfig/sysinfo",
     "description": "Library to get system info and available resources",
+    "keywords": ["system", "info", "cpu", "ram", "resources"],
     "type": "library",
-    "license": "GPL-3.0",
+    "license": "MIT",
     "authors": [
         {
             "name": "\"John Linhart\"",
-            "email": "john@linhart.email"
+            "email": "john@linhart.email",
+            "homepage" : "https://johnlinhart.com",
+            "role" : "Developer"
         }
     ],
+    "support": {
+        "issues": "https://github.com/cronfig/sysinfo/issues"
+    },
     "minimum-stability": "alpha",
     "require": {},
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "phpunit/phpunit" : "^6.0",
+        "phpstan/phpstan": "^0.8.4"
+    },
     "autoload": {
         "psr-4": {
             "Cronfig\\Sysinfo\\": "src"
@@ -20,5 +31,11 @@
         "psr-4": {
             "CronfigTest\\Sysinfo\\": "tests"
         }
+    },
+    "scripts": {
+        "test": "phpunit --coverage-text; php-cs-fixer fix -v --diff --dry-run --allow-risky=yes;",
+        "phpunit": "phpunit --coverage-text",
+        "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes;",
+        "phpstan": "vendor/bin/phpstan analyse src tests"
     }
 }

@@ -10,12 +10,20 @@ namespace CronfigTest\Sysinfo;
 
 use Cronfig\Sysinfo\Linux;
 
-class LinuxTest extends \PHPUnit_Framework_TestCase
+class LinuxTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetMemoryInfo()
+    public function testInUseTrue()
     {
-        $os = new Linux;
-        $info = $os->getMemoryInfo();
-        echo "<pre>";var_dump($info);die("</pre>");
+        $os = $this->getMockBuilder(Linux::class)
+            ->setMethods(['getCurrentOsName'])
+            ->getMock();
+
+        $os->expects($this->once())
+            ->method('getCurrentOsName')
+            ->will($this->returnValue('Linux'));
+
+        $result = $os->inUse();
+
+        $this->assertTrue($result);
     }
 }

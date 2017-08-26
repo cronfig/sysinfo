@@ -9,17 +9,17 @@
 namespace CronfigTest\Sysinfo;
 
 use Cronfig\Sysinfo\AbstractOs;
+use PHPUnit\Framework\Constraint\IsType;
 
-class AbstractOsTest extends \PHPUnit_Framework_TestCase
+class AbstractOsTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetCurrentMemoryUsageInPercent()
     {
         $os = $this->getMockForAbstractClass(AbstractOs::class);
         $result = $os->getCurrentMemoryUsageInPercent();
 
-        $this->assertInternalType(\PHPUnit_Framework_Constraint_IsType::TYPE_FLOAT, $result);
+        $this->assertInternalType(IsType::TYPE_FLOAT, $result);
         $this->assertGreaterThan(0, $result);
-        $this->assertLessThan(100, $result);
     }
 
     public function testGetCurrentMemoryInfo()
@@ -27,7 +27,7 @@ class AbstractOsTest extends \PHPUnit_Framework_TestCase
         $os = $this->getMockForAbstractClass(AbstractOs::class);
         $result = $os->getCurrentMemoryUsage();
 
-        $this->assertInternalType(\PHPUnit_Framework_Constraint_IsType::TYPE_INT, $result);
+        $this->assertInternalType(IsType::TYPE_INT, $result);
         $this->assertGreaterThan(0, $result);
     }
 
@@ -36,7 +36,7 @@ class AbstractOsTest extends \PHPUnit_Framework_TestCase
         $os = $this->getMockForAbstractClass(AbstractOs::class);
         $result = $os->getMemoryLimit();
 
-        $this->assertInternalType(\PHPUnit_Framework_Constraint_IsType::TYPE_INT, $result);
+        $this->assertInternalType(IsType::TYPE_INT, $result);
         $this->assertGreaterThan(0, $result);
     }
 }

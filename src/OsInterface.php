@@ -55,7 +55,7 @@ interface OsInterface
     /**
      * Converts shorthand memory notation value to bytes
      *
-     * @param  string $val Memory size shorthand notation string
+     * @param string $val Memory size shorthand notation string
      *
      * @return int in bytes
      */
@@ -64,7 +64,7 @@ interface OsInterface
     /**
      * Throws an exception if the function does not exist or is disabled
      *
-     * @param  string $name of the required function
+     * @param string $name of the required function
      *
      * @return self
      */
@@ -73,7 +73,7 @@ interface OsInterface
     /**
      * Check if the function is disabled in php.ini
      *
-     * @param  string  $name
+     * @param string $name
      *
      * @return bool
      */
