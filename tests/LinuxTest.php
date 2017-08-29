@@ -50,11 +50,11 @@ class LinuxTest extends CommonTestCase
         // Sadly, we cannot test this on other OS than Linux
         if (!$os->inUse()) {
             $os = $this->getMockBuilder(Linux::class)
-                ->setMethods(['assertGreaterThan'])
+                ->setMethods(['getCoreCount'])
                 ->getMock();
 
             $os->expects($this->once())
-                ->method('assertGreaterThan')
+                ->method('getCoreCount')
                 ->will($this->returnValue(2));
         }
 

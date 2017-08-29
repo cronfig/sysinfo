@@ -50,11 +50,11 @@ class MacTest extends CommonTestCase
         // Sadly, we cannot test this on other OS than Mac
         if (!$os->inUse()) {
             $os = $this->getMockBuilder(Mac::class)
-                ->setMethods(['assertGreaterThan'])
+                ->setMethods(['getCoreCount'])
                 ->getMock();
 
             $os->expects($this->once())
-                ->method('assertGreaterThan')
+                ->method('getCoreCount')
                 ->will($this->returnValue(2));
         }
 
