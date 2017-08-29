@@ -48,13 +48,18 @@ class MacTest extends CommonTestCase
         $os = new Mac;
 
         // Sadly, we cannot test this on other OS than Mac
-        if ($os->inUse()) {
-            return;
+        if (!$os->inUse()) {
+            $os = $this->getMockBuilder(Mac::class)
+                ->setMethods(['assertGreaterThan'])
+                ->getMock();
+
+            $os->expects($this->once())
+                ->method('assertGreaterThan')
+                ->will($this->returnValue(2));
         }
 
         $result = $os->getCoreCount();
-
-        $this->assertGreaterThan(1, $result);
+        $this->assertGreaterThanOrEqual(1, $result);
         $this->assertInternalType(IsType::TYPE_INT, $result);
     }
 }

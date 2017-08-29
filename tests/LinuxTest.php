@@ -46,14 +46,20 @@ class LinuxTest extends CommonTestCase
     public function testGetCoreCount()
     {
         $os = new Linux;
-        $result = $os->getCoreCount();
 
         // Sadly, we cannot test this on other OS than Linux
-        if ($os->inUse()) {
-            return;
+        if (!$os->inUse()) {
+            $os = $this->getMockBuilder(Linux::class)
+                ->setMethods(['assertGreaterThan'])
+                ->getMock();
+
+            $os->expects($this->once())
+                ->method('assertGreaterThan')
+                ->will($this->returnValue(2));
         }
 
-        $this->assertGreaterThan(1, $result);
+        $result = $os->getCoreCount();
+        $this->assertGreaterThanOrEqual(1, $result);
         $this->assertInternalType(IsType::TYPE_INT, $result);
     }
 }
