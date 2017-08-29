@@ -184,8 +184,8 @@ abstract class AbstractOs
     /**
      * Helper method which counts percentage and ensures we don't devide by 0
      *
-     * @param int $current
-     * @param int $limit
+     * @param double $current
+     * @param double $limit
      * @param int $round
      *
      * @return float
@@ -210,7 +210,7 @@ abstract class AbstractOs
     {
         $val  = trim($val);
         $unit = strtolower($val[strlen($val) - 1]);
-        $val  = substr($val, 0, -1);
+        $val  = (int) substr($val, 0, -1);
 
         switch ($unit) {
             case 'g':

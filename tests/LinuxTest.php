@@ -9,6 +9,7 @@
 namespace CronfigTest\Sysinfo;
 
 use Cronfig\Sysinfo\Linux;
+use PHPUnit\Framework\Constraint\IsType;
 
 class LinuxTest extends CommonTestCase
 {
@@ -46,6 +47,11 @@ class LinuxTest extends CommonTestCase
     {
         $os = new Linux;
         $result = $os->getCoreCount();
+
+        // Sadly, we cannot test this on other OS than Linux
+        if ($os->inUse()) {
+            return;
+        }
 
         $this->assertGreaterThan(1, $result);
         $this->assertInternalType(IsType::TYPE_INT, $result);

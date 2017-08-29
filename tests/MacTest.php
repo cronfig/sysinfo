@@ -46,6 +46,12 @@ class MacTest extends CommonTestCase
     public function testGetCoreCount()
     {
         $os = new Mac;
+
+        // Sadly, we cannot test this on other OS than Mac
+        if ($os->inUse()) {
+            return;
+        }
+
         $result = $os->getCoreCount();
 
         $this->assertGreaterThan(1, $result);
