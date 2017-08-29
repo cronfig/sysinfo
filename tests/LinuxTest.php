@@ -10,7 +10,7 @@ namespace CronfigTest\Sysinfo;
 
 use Cronfig\Sysinfo\Linux;
 
-class LinuxTest extends \PHPUnit\Framework\TestCase
+class LinuxTest extends CommonTestCase
 {
     public function testInUseTrue()
     {
@@ -25,5 +25,29 @@ class LinuxTest extends \PHPUnit\Framework\TestCase
         $result = $os->inUse();
 
         $this->assertTrue($result);
+    }
+
+    public function testInUseFalse()
+    {
+        $os = $this->getMockBuilder(Linux::class)
+            ->setMethods(['getCurrentOsName'])
+            ->getMock();
+
+        $os->expects($this->once())
+            ->method('getCurrentOsName')
+            ->will($this->returnValue('Windows'));
+
+        $result = $os->inUse();
+
+        $this->assertFalse($result);
+    }
+
+    public function testGetCoreCount()
+    {
+        $os = new Linux;
+        $result = $os->getCoreCount();
+
+        $this->assertGreaterThan(1, $result);
+        $this->assertInternalType(IsType::TYPE_INT, $result);
     }
 }

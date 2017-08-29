@@ -42,31 +42,72 @@ abstract class AbstractOs
         return memory_get_peak_usage();
     }
 
+    /**
+     * Finds out PHP memory limit from php.ini
+     *
+     * @return int in bytes
+     */
     public function getMemoryLimit()
     {
         return $this->getBytesFromPhpIniValue(ini_get('memory_limit'));
     }
 
+    /**
+     * Finds out max PHP execution time limit from php.ini
+     *
+     * @return int in seconds. If set to zero, no time limit is imposed.
+     */
     public function getExecutionTimeLimit()
     {
-        return ini_get('max_execution_time');
+        return (int) ini_get('max_execution_time');
     }
 
-    public function getCurrentMemoryUsageInPercent()
+    /**
+     * Calculates current memory usage where 100% is the PHP memory limit
+     *
+     * @param int $round
+     *
+     * @return float
+     */
+    public function getCurrentMemoryUsageInPercent($round = 2)
     {
-        return $this->getPercentage($this->getCurrentMemoryUsage(), $this->getMemoryLimit());
+        return $this->getPercentage($this->getCurrentMemoryUsage(), $this->getMemoryLimit(), $round);
     }
 
-    public function getPeakMemoryUsageInPercent()
+    /**
+     * Calculates peak memory usage where 100% is the PHP memory limit
+     *
+     * @param int $round
+     *
+     * @return float
+     */
+    public function getPeakMemoryUsageInPercent($round = 2)
     {
-        return $this->getPercentage($this->getPeakMemoryUsage(), $this->getMemoryLimit());
+        return $this->getPercentage($this->getPeakMemoryUsage(), $this->getMemoryLimit(), $round);
     }
 
+    /**
+     * Returns system load divided by CPU cores to get percentage per core.
+     * value < 100% means system handles the processes fine
+     * value > 100% means system is overloaded and some processes are waiting for processing time
+     *
+     * @param int $timeframe Use the constats of this class instead of integers
+     * @param int $round
+     *
+     * @return float
+     */
     public function getLoadInPercent($timeframe, $round = 2)
     {
-        return round($this->getLoad($timeframe) / $this->getCoreCount() * 100, $round);
+        return $this->getPercentage($this->getLoad($timeframe), $this->getCoreCount(), $round);
     }
 
+    /**
+     * Gets system load. Implemented by PHP only on linux based systems.
+     *
+     * @param int $timeframe Use the constats of this class instead of integers
+     *
+     * @return int
+     */
     public function getLoad($timeframe)
     {
         $this->requiredFunction('sys_getloadavg');
@@ -74,12 +115,19 @@ abstract class AbstractOs
         $possibleArguments = [self::TIMEFRAME_1_MIN, self::TIMEFRAME_5_MIN, self::TIMEFRAME_15_MIN];
 
         if (!in_array($timeframe, $possibleArguments)) {
-            throw new \InvalidArgumentException;
+            throw new \UnexpectedValueException;
         }
 
         return sys_getloadavg()[$timeframe];
     }
 
+    /**
+     * Counts free disk percentage
+     *
+     * @param int $round
+     *
+     * @return float
+     */
     public function getDiskUsagePercentage($round = 2)
     {
         $this->requiredFunction('disk_total_space')->requiredFunction('disk_free_space');
@@ -87,7 +135,7 @@ abstract class AbstractOs
         $disktotal = disk_total_space('/');
         $diskfree  = disk_free_space('/');
 
-        return round(100 - (($diskfree / $disktotal) * 100), $round);
+        return 100 - $this->getPercentage($diskfree, $disktotal, $round);
     }
 
     /**
@@ -111,27 +159,37 @@ abstract class AbstractOs
         return php_uname('s');
     }
 
+    /**
+     * Provides optimal timeframe for system load methods based on real execution time
+     *
+     * @param int $executionTime in seconds
+     *
+     * @return int
+     */
     public function getTimeframeFromExecutionTime($executionTime)
     {
         $ETInMinutes = $executionTime / 60;
 
-        switch ($ETInMinutes) {
-            case $ETInMinutes > 10:
-                $timeframe = self::TIMEFRAME_15_MIN;
-                break;
-
-            case $ETInMinutes > 4:
-                $timeframe = self::TIMEFRAME_5_MIN;
-                break;
-
-            default:
-                $timeframe = self::TIMEFRAME_1_MIN;
-                break;
+        if ($ETInMinutes > 10) {
+            $timeframe = self::TIMEFRAME_15_MIN;
+        } elseif ($ETInMinutes > 4) {
+            $timeframe = self::TIMEFRAME_5_MIN;
+        } else {
+            $timeframe = self::TIMEFRAME_1_MIN;
         }
 
         return $timeframe;
     }
 
+    /**
+     * Helper method which counts percentage and ensures we don't devide by 0
+     *
+     * @param int $current
+     * @param int $limit
+     * @param int $round
+     *
+     * @return float
+     */
     public function getPercentage($current, $limit, $round = 2)
     {
         if (!$limit) {
@@ -150,19 +208,20 @@ abstract class AbstractOs
      */
     public function getBytesFromPhpIniValue($val)
     {
-        $val = trim($val);
-        $last = strtolower($val[strlen($val) - 1]);
+        $val  = trim($val);
+        $unit = strtolower($val[strlen($val) - 1]);
+        $val  = substr($val, 0, -1);
 
-        switch ($last) {
+        switch ($unit) {
             case 'g':
                 $val *= 1024;
-                break;
+                // no break;
             case 'm':
                 $val *= 1024;
-                break;
+                // no break;
             case 'k':
                 $val *= 1024;
-                break;
+                // no break;
         }
 
         return $val;

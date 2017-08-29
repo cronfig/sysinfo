@@ -11,7 +11,7 @@ namespace CronfigTest\Sysinfo;
 use Cronfig\Sysinfo\Mac;
 use PHPUnit\Framework\Constraint\IsType;
 
-class MacTest extends \PHPUnit\Framework\TestCase
+class MacTest extends CommonTestCase
 {
     public function testInUseTrue()
     {
