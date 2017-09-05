@@ -60,6 +60,11 @@ Testing
 $ composer test
 ```
 
+#### Continuous integration
+
+- [Travis CI](https://travis-ci.org/cronfig/sysinfo)
+- [Scrutinizer CI](https://scrutinizer-ci.com/g/cronfig/sysinfo/)
+
 License
 -------
 
