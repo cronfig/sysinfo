@@ -13,6 +13,50 @@ use PHPUnit\Framework\Constraint\IsType;
 
 class AbstractOsTest extends CommonTestCase
 {
+    public function testCanHandleMoreWithFreeResources()
+    {
+        $os = $this->mockAbstractClass(AbstractOs::class, ['getCurrentMemoryUsagePercentage', 'getLoadPercentage']);
+
+        $os->expects($this->once())
+            ->method('getCurrentMemoryUsagePercentage')
+            ->willReturn(50);
+
+        $os->expects($this->once())
+            ->method('getLoadPercentage')
+            ->will($this->returnValue(80));
+
+        $this->assertTrue($os->canHandleMore(AbstractOs::TIMEFRAME_1_MIN));
+    }
+
+    public function testCanHandleMoreWithOverloadedMemory()
+    {
+        $os = $this->mockAbstractClass(AbstractOs::class, ['getCurrentMemoryUsagePercentage', 'getLoadPercentage']);
+
+        $os->expects($this->once())
+            ->method('getCurrentMemoryUsagePercentage')
+            ->willReturn(94);
+
+        $os->expects($this->never())
+            ->method('getLoadPercentage');
+
+        $this->assertFalse($os->canHandleMore(AbstractOs::TIMEFRAME_5_MIN));
+    }
+
+    public function testCanHandleMoreWithOverloadedSystemLoad()
+    {
+        $os = $this->mockAbstractClass(AbstractOs::class, ['getCurrentMemoryUsagePercentage', 'getLoadPercentage']);
+
+        $os->expects($this->once())
+            ->method('getCurrentMemoryUsagePercentage')
+            ->willReturn(91);
+
+        $os->expects($this->once())
+            ->method('getLoadPercentage')
+            ->willReturn(95);
+
+        $this->assertFalse($os->canHandleMore(AbstractOs::TIMEFRAME_15_MIN, 94));
+    }
+
     public function testGetCurrentMemoryUsage()
     {
         $os = $this->mockAbstractClass(AbstractOs::class);
@@ -49,17 +93,17 @@ class AbstractOsTest extends CommonTestCase
         $this->assertGreaterThanOrEqual(0, $result);
     }
 
-    public function testGetCurrentMemoryUsageInPercent()
+    public function testGetCurrentMemoryUsagePercentage()
     {
         $os = $this->mockAbstractClass(AbstractOs::class);
-        $result = $os->getCurrentMemoryUsageInPercent();
+        $result = $os->getCurrentMemoryUsagePercentage();
 
         $this->assertInternalType(IsType::TYPE_FLOAT, $result);
         $this->assertGreaterThan(0, $result);
         $this->assertLessThanOrEqual(100, $result);
     }
 
-    public function testGetCurrentMemoryUsageInPercentWithMockData()
+    public function testGetCurrentMemoryUsagePercentageWithMockData()
     {
         $os = $this->mockAbstractClass(AbstractOs::class, ['getCurrentMemoryUsage', 'getMemoryLimit']);
 
@@ -71,22 +115,22 @@ class AbstractOsTest extends CommonTestCase
             ->method('getMemoryLimit')
             ->will($this->returnValue(100));
 
-        $result = $os->getCurrentMemoryUsageInPercent();
+        $result = $os->getCurrentMemoryUsagePercentage();
 
         $this->assertEquals(50, $result);
     }
 
-    public function testGetPeakMemoryUsageInPercent()
+    public function testGetPeakMemoryUsagePercentage()
     {
         $os = $this->mockAbstractClass(AbstractOs::class);
-        $result = $os->getPeakMemoryUsageInPercent();
+        $result = $os->getPeakMemoryUsagePercentage();
 
         $this->assertInternalType(IsType::TYPE_FLOAT, $result);
         $this->assertGreaterThan(0, $result);
         $this->assertLessThanOrEqual(100, $result);
     }
 
-    public function testGetPeakMemoryUsageInPercentWithMockData()
+    public function testGetPeakMemoryUsagePercentageWithMockData()
     {
         $os = $this->mockAbstractClass(AbstractOs::class, ['getPeakMemoryUsage', 'getMemoryLimit']);
 
@@ -98,19 +142,19 @@ class AbstractOsTest extends CommonTestCase
             ->method('getMemoryLimit')
             ->will($this->returnValue(100));
 
-        $result = $os->getPeakMemoryUsageInPercent();
+        $result = $os->getPeakMemoryUsagePercentage();
 
         $this->assertEquals(50, $result);
     }
 
-    public function testGetLoadInPercentWithoutCoreCountMethodImplemented()
+    public function testGetLoadPercentageWithoutCoreCountMethodImplemented()
     {
         $this->expectException(\BadMethodCallException::class);
         $os = $this->mockAbstractClass(AbstractOs::class);
-        $result = $os->getLoadInPercent(AbstractOs::TIMEFRAME_5_MIN);
+        $result = $os->getLoadPercentage(AbstractOs::TIMEFRAME_5_MIN);
     }
 
-    public function testGetLoadInPercent()
+    public function testGetLoadPercentage()
     {
         $os = $this->mockAbstractClass(AbstractOs::class, ['getCoreCount']);
 
@@ -118,7 +162,7 @@ class AbstractOsTest extends CommonTestCase
             ->method('getCoreCount')
             ->will($this->returnValue(2));
 
-        $result = $os->getLoadInPercent(AbstractOs::TIMEFRAME_5_MIN);
+        $result = $os->getLoadPercentage(AbstractOs::TIMEFRAME_5_MIN);
 
         $this->assertInternalType(IsType::TYPE_FLOAT, $result);
         $this->assertGreaterThan(0, $result);

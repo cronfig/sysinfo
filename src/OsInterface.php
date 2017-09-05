@@ -33,14 +33,50 @@ interface OsInterface
      */
     public function getPeakMemoryUsage();
 
+    /**
+     * Finds out PHP memory limit from php.ini
+     *
+     * @return int in bytes
+     */
     public function getMemoryLimit();
 
-    public function getCurrentMemoryUsageInPercent();
+    /**
+     * Calculates current memory usage where 100% is the PHP memory limit
+     *
+     * @param int $round
+     *
+     * @return float
+     */
+    public function getCurrentMemoryUsagePercentage();
 
-    public function getPeakMemoryUsageInPercent();
+    /**
+     * Calculates peak memory usage where 100% is the PHP memory limit
+     *
+     * @param int $round
+     *
+     * @return float
+     */
+    public function getPeakMemoryUsagePercentage();
 
-    public function getLoadInPercent($timeframe, $round = 2);
+    /**
+     * Returns system load divided by CPU cores to get percentage per core.
+     * value < 100% means system handles the processes fine
+     * value > 100% means system is overloaded and some processes are waiting for processing time
+     *
+     * @param int $timeframe Use the constats of this class instead of integers
+     * @param int $round
+     *
+     * @return float
+     */
+    public function getLoadPercentage($timeframe, $round = 2);
 
+    /**
+     * Gets system load. Implemented by PHP only on linux based systems.
+     *
+     * @param int $timeframe Use the constats of this class instead of integers
+     *
+     * @return int
+     */
     public function getLoad($timeframe);
 
     /**
@@ -50,6 +86,31 @@ interface OsInterface
      */
     public function getCoreCount();
 
+    /**
+     * Returns name of the current OS
+     *
+     * @return string
+     */
+    public function getCurrentOsName();
+
+    /**
+     * Provides optimal timeframe for system load methods based on real execution time
+     *
+     * @param int $executionTime in seconds
+     *
+     * @return int
+     */
+    public function getTimeframeFromExecutionTime($executionTime);
+
+    /**
+     * Helper method which counts percentage and ensures we don't devide by 0
+     *
+     * @param double $current
+     * @param double $limit
+     * @param int $round
+     *
+     * @return float
+     */
     public function getPercentage($current, $limit, $round = 2);
 
     /**

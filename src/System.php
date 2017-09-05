@@ -23,6 +23,11 @@ class System
      */
     protected $os;
 
+    /**
+     * Constructor
+     *
+     * @param array $customs Array of custom OS class names can be added here
+     */
     public function __construct(array $customs = [])
     {
         $defaults = [
@@ -33,13 +38,18 @@ class System
         $this->registerOs(array_merge($customs, $defaults));
     }
 
+    /**
+     * Register array of OS class and pick the one in use
+     *
+     * @param  array  $classNames
+     */
     public function registerOs(array $classNames)
     {
         foreach ($classNames as $className) {
             $os = new $className;
 
             if (!$os instanceof OsInterface) {
-                throw new \UnexpectedValueException("Class {$className} must implement {OsIntefrace::class}");
+                throw new \UnexpectedValueException("Class {$className} must implement ".OsIntefrace::class);
             }
 
             if ($os->inUse()) {
@@ -51,6 +61,11 @@ class System
         }
     }
 
+    /**
+     * Returns currently used OS object
+     *
+     * @return OsInterface
+     */
     public function getOs()
     {
         return $this->os;

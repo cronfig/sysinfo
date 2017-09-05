@@ -19,6 +19,28 @@ abstract class AbstractOs
     const TIMEFRAME_15_MIN = 2;
 
     /**
+     * Checks whether the system has enough system load and memory for more work to do.
+     * Less than 90% by default.
+     *
+     * @param  int $timeframe
+     * @param  int $limit In percent
+     *
+     * @return bool
+     */
+    public function canHandleMore($timeframe, $limit = 90)
+    {
+        if ($this->getCurrentMemoryUsagePercentage() >= $limit) {
+            return false;
+        }
+
+        if ($this->getLoadPercentage($timeframe) >= $limit) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Returns the amount of memory allocated to PHP
      *
      * @return int in bytes
@@ -69,7 +91,7 @@ abstract class AbstractOs
      *
      * @return float
      */
-    public function getCurrentMemoryUsageInPercent($round = 2)
+    public function getCurrentMemoryUsagePercentage($round = 2)
     {
         return $this->getPercentage($this->getCurrentMemoryUsage(), $this->getMemoryLimit(), $round);
     }
@@ -81,7 +103,7 @@ abstract class AbstractOs
      *
      * @return float
      */
-    public function getPeakMemoryUsageInPercent($round = 2)
+    public function getPeakMemoryUsagePercentage($round = 2)
     {
         return $this->getPercentage($this->getPeakMemoryUsage(), $this->getMemoryLimit(), $round);
     }
@@ -96,7 +118,7 @@ abstract class AbstractOs
      *
      * @return float
      */
-    public function getLoadInPercent($timeframe, $round = 2)
+    public function getLoadPercentage($timeframe, $round = 2)
     {
         return $this->getPercentage($this->getLoad($timeframe), $this->getCoreCount(), $round);
     }
