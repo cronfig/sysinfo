@@ -49,7 +49,7 @@ class System
             $os = new $className;
 
             if (!$os instanceof OsInterface) {
-                throw new \UnexpectedValueException("Class {$className} must implement ".OsIntefrace::class);
+                throw new \UnexpectedValueException("Class {$className} must implement ".OsInterface::class);
             }
 
             if ($os->inUse()) {
